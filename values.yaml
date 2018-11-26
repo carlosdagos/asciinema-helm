@@ -1,0 +1,62 @@
+---
+# Default values for asciinema.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+homeAsciicastId: 1
+mailname: localhost
+urlHost: localhost:8080
+secretKeyBase: "_______________SECRET_STRING_THAT_IS__64_BYTES__________________"
+smtpAddress: "hello@localhost"
+
+images:
+  redis:
+    registry: docker.io
+    repository: redis
+    tag: 4.0-alpine
+    pullPolicy: IfNotPresent
+    replicas: 1
+  postgres:
+    registry: docker.io
+    repository: postgres
+    tag: 10.6-alpine
+    pullPolicy: IfNotPresent
+  asciinema:
+    registry: docker.io
+    repository: asciinema/asciinema-server
+    tag: develop
+    pullPolicy: IfNotPresent
+  nginx:
+    registry: docker.io
+    repository: nginx
+    tag: 1.15-alpine
+    pullPolicy: IfNotPresent
+  smtp:
+    registry: docker.io
+    repository: namshi/smtp
+    tag: latest
+    pullPolicy: IfNotPresent
+
+
+service:
+  type: ClusterIP
+  port: 80
+
+
+ingress:
+  enabled: false
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

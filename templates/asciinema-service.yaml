@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "asciinema.fullname" . }}
+  labels:
+    app: {{ template "asciinema.name" . }}
+    chart: {{ template "asciinema.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    app: {{ template "asciinema.fullname" . }}
+  ports:
+    - name: {{ template "asciinema.fullname" . }}-http-port
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: {{ template "asciinema.fullname" . }}-exui-port
+      protocol: TCP
+      port: 4040
+      targetPort: 4040

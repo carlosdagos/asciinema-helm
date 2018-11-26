@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "asciinema.fullname" . }}-redis
+  labels:
+    app: {{ template "asciinema.name" . }}
+    chart: {{ template "asciinema.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "asciinema.fullname" . }}-redis
+  template:
+    metadata:
+      labels:
+        app: {{ template "asciinema.fullname" . }}-redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ template "redis-image.url" . }}
+          envFrom:
+            - configMapRef:
+                name: {{ template "asciinema.fullname" . }}-config
+      restartPolicy: Always

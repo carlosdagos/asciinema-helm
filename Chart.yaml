@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+appVersion: "1.0"
+description: An asciinema Helm chart for Kubernetes
+name: asciinema
+version: 0.1.0
+icon: https://hub.docker.com/v2/users/asciinema/avatar/
+home: https://asciinema.org/
+engine: gotpl

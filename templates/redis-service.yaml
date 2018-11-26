@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "asciinema.fullname" . }}-redis
+  labels:
+    app: {{ template "asciinema.name" . }}
+    chart: {{ template "asciinema.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    app: {{ template "asciinema.fullname" . }}-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

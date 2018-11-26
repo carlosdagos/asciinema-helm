@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "asciinema.fullname" . }}-config
+  labels:
+    app: {{ template "asciinema.name" . }}
+    chart: {{ template "asciinema.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  ## PostgreSQL connection URL.
+  DATABASE_URL: "postgresql://postgres@{{ template "asciinema.fullname" . }}-postgres/postgres"
+
+  ## Redis connection URL.
+  ## Default:
+  REDIS_URL: "redis://{{ template "asciinema.fullname" . }}-redis:6379"
+
+  ## ID of the "demo" asciicast displayed on the homepage.
+  ## Default: first public asciicast
+  HOME_ASCIICAST_ID: "{{ .Values.homeAsciicastId }}"
+
+  ### E-mail delivery
+
+  ## Outgoing mail hostname, used by namshi/smtp container.
+  MAILNAME: "{{ .Values.mailname }}"
+
+  ## "From" field for all emails sent by this instance.
+  SMTP_FROM_ADDRESS: "{{ .Values.smtpAddress }}"
+
+  ## Base URL of your asciinema web app instance
+  URL_SCHEME: "http"
+  URL_HOST: {{ .Values.urlHost }}
+  URL_PORT: "80"
+
+  # Secret key
+  SECRET_KEY_BASE: "{{ .Values.secretKeyBase }}"

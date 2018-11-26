@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "asciinema.fullname" . }}
+  labels:
+    app: {{ template "asciinema.name" . }}
+    chart: {{ template "asciinema.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.images.asciinema.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "asciinema.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "asciinema.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+    spec:
+      # Wait for the Postgres and Redis to be up before booting the app
+      initContainers:
+        - name: init-redis-ping
+          image: {{ template "redis-image.url" . }}
+          command: ["redis-cli"]
+          args: ["-h", "{{ template "asciinema.fullname" . }}-redis", "-p", "6379", "ping"]
+          envFrom:
+            - configMapRef:
+                name: {{ template "asciinema.fullname" . }}-config
+        - name: init-postgres-setup
+          image: {{ template "asciinema-image.url" . }}
+          command: ["setup"]
+          envFrom:
+            - configMapRef:
+                name: {{ template "asciinema.fullname" . }}-config
+            - secretRef:
+                name: {{ template "asciinema.fullname" . }}-secret
+          volumeMounts:
+            - name: app-uploads
+              mountPath: /app/uploads
+      containers:
+        - name: webapp
+          image: {{ template "asciinema-image.url" . }}
+          command: ["asciinema", "foreground"]
+          envFrom:
+            - configMapRef:
+                name: {{ template "asciinema.fullname" . }}-config
+            - secretRef:
+                name: {{ template "asciinema.fullname" . }}-secret
+          volumeMounts:
+            - name: app-uploads
+              mountPath: /app/uploads
+        - name: nginx
+          image: {{ template "nginx-image.url" . }}
+          volumeMounts:
+            - name: {{ template "asciinema.fullname" . }}-nginx-config-volume
+              mountPath: "/etc/nginx/conf.d"
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: app-uploads
+          emptyDir: {}
+        - name: {{ template "asciinema.fullname" . }}-nginx-config-volume
+          configMap:
+            name: {{ template "asciinema.fullname" . }}-nginx-config
