@@ -12,12 +12,12 @@ spec:
   replicas: {{ .Values.images.asciinema.replicas }}
   selector:
     matchLabels:
-      app: {{ template "asciinema.name" . }}
+      app: {{ .Release.Name }}-{{ template "asciinema.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "asciinema.name" . }}
+        app: {{ .Release.Name }}-{{ template "asciinema.name" . }}
         release: {{ .Release.Name }}
     spec:
     spec:
