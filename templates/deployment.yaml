@@ -20,7 +20,6 @@ spec:
         app: {{ .Release.Name }}-{{ template "asciinema.name" . }}
         release: {{ .Release.Name }}
     spec:
-    spec:
       # Wait for the Postgres and Redis to be up before booting the app
       initContainers:
         - name: init-redis-ping
