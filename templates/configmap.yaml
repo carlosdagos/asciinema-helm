@@ -29,9 +29,9 @@ data:
   SMTP_FROM_ADDRESS: "{{ .Values.smtpAddress }}"
 
   ## Base URL of your asciinema web app instance
-  URL_SCHEME: "http"
-  URL_HOST: {{ .Values.urlHost }}
-  URL_PORT: "80"
+  URL_SCHEME: "{{ .Values.urlScheme }}"
+  URL_HOST: "{{ .Values.urlHost }}"
+  URL_PORT: "{{ .Values.urlPort }}"
 
   # Secret key
   SECRET_KEY_BASE: "{{ .Values.secretKeyBase }}"

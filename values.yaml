@@ -6,6 +6,8 @@
 homeAsciicastId: 1
 mailname: localhost
 urlHost: localhost:8080
+urlScheme: http
+urlPort: 80
 secretKeyBase: "_______________SECRET_STRING_THAT_IS__64_BYTES__________________"
 smtpAddress: "hello@localhost"
 
