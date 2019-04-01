@@ -10,10 +10,6 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   default.conf: |-
-    upstream rails-server {
-        server localhost:3000 fail_timeout=0;
-    }
-
     upstream phoenix-server {
         server localhost:4000 fail_timeout=0;
     }
@@ -37,18 +33,15 @@ data:
 
         server_name _;
 
-        root /app/public;
+        root /opt/app/lib/asciinema-0.0.1/priv/static;
 
         client_max_body_size 16m;
 
-        location = / {
-            try_files $uri $uri/index.html $uri.html @rails;
+        location / {
+            try_files $uri $uri/index.html $uri.html @phoenix;
         }
 
-        location ~ ^/(~|u/|a/[^./]+(/($|edit|raw|embed|example))?$|username|logout|oembed) {
-            try_files $uri $uri/index.html $uri.html @rails;
-        }
-
+        # enable caching of PNG previews
         location ~ ^/a/[^.]+\.png$ {
             proxy_cache png_cache;
             proxy_cache_revalidate on;
@@ -65,31 +58,12 @@ data:
             proxy_redirect off;
         }
 
-        location / {
-            try_files $uri $uri/index.html $uri.html @phoenix;
-        }
-
-        # compiled, digested assets
-        location ~ "^/assets/.+-[0-9a-f]{32,}" {
-            expires 1y;
+        # enable caching of digested assets for up to 1 year
+        location ~ "^/(css|js|fonts|images)/.+-[0-9a-f]{32}\." {
+            expires max;
             add_header Cache-Control public;
             add_header ETag "";
             try_files $uri @phoenix;
-        }
-
-        # development assets
-        location ~ ^/assets/ {
-            try_files $uri $uri/index.html $uri.html @rails;
-        }
-
-        location @rails {
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $real_scheme;
-            proxy_set_header Host $http_host;
-            proxy_pass http://rails-server;
-            proxy_redirect off;
-            error_page 500 502 504 /500.html; # Rails error pages
         }
 
         location @phoenix {
